@@ -9,11 +9,11 @@ import java.util.ArrayList;
  */
 
 public class Feed {
-    private ArrayList<Bitmap> feedpics;
+    private ArrayList<String> feedpics;
     private String feedname;
     private String id;
 
-    public Feed(String feedname, String id){
+    public Feed(String feedname, String id, ArrayList<String> feedpics){
         this.feedpics = feedpics;
         this.feedname = feedname;
         this.id = id;

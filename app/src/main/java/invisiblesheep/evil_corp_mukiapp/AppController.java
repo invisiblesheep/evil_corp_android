@@ -7,6 +7,7 @@ package invisiblesheep.evil_corp_mukiapp;
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 public class AppController extends Application{
     public static final String TAG = AppController.class.getSimpleName();
 
+    private String test = "test";
     private RequestQueue mRequestQueue;
     private ImageLoader mImageLoader;
     private LruBitmapCache lruBitmapCache;
@@ -33,7 +35,11 @@ public class AppController extends Application{
 
     //private ArrayList<League> leagues;
 
-    private static AppController mInstance = null;
+    private static AppController mInstance;
+
+    public String getTest(){
+        return this.test;
+    }
 
     @Override
     public void onCreate(){
@@ -93,6 +99,12 @@ public class AppController extends Application{
 
     public void saveBitmap(Bitmap bitmap){
         feedpics.add(bitmap);
+        MainActivity.setImageviewBitmap(bitmap);
+        Log.d(TAG, "saveBitmap: " + bitmap);
+    }
+
+    public void clearBitmapCache(){
+        feedpics = new ArrayList<>();
     }
 
     public ImageLoader getImageLoader(){

@@ -2,6 +2,7 @@ package invisiblesheep.evil_corp_mukiapp;
 
 import android.graphics.Bitmap;
 import android.util.Log;
+import android.widget.ImageView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -26,7 +27,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 public class ServerConnection {
 
     public static final String TAG = AppController.class.getSimpleName();
-    public static final String koffeedurl = "http://koffeed.com/api";
+    public static final String kaffeedurl = "http://kaffeed.com/";
 
 
     public static ArrayList<Feed> buildFeedFromJson(JSONArray array){
@@ -35,21 +36,28 @@ public class ServerConnection {
         try{
             for(int i = 0; i < array.length(); i++){
                 JSONObject object = array.getJSONObject(i);
-                String id = object.getString("_id");
-                String feedname = object.getString("feedname");
-                //JSONObject pics = object.getJSONObject("pics");
-                String pic1 = object.getJSONArray("pics").getString(0);
-                String pic2 = object.getJSONArray("pics").getString(1);
-                String pic3 = object.getJSONArray("pics").getString(2);
-                String pic4 = object.getJSONArray("pics").getString(3);
-                String pic5 = object.getJSONArray("pics").getString(4);
-                ArrayList<String> picIds = new ArrayList<>();
-                picIds.add(pic1);
-                picIds.add(pic2);
-                picIds.add(pic3);
-                picIds.add(pic4);
-                picIds.add(pic5);
-                for(String url : picIds){
+                String id = object.getString("feed_id");
+                String name = object.getString("name");
+                JSONArray pics = object.getJSONArray("pics");
+                ArrayList<String> picsArray = new ArrayList<>();
+                for(int j = 0; j < pics.length(); j++){
+                    JSONObject pic = pics.getJSONObject(j);
+                    picsArray.add(pic.getString("url"));
+                }
+                Log.d(TAG, "buildFeedFromJson: pics: " + pics);
+//                String pic1 = object.getJSONArray("pics").getString(0);
+//                pic1 = pic1.substring(8, pic1.length() - 2);
+//                String pic2 = object.getJSONArray("pics").getString(1);
+//                pic2 = pic2.substring(8, pic2.length() - 2);
+//                String pic3 = object.getJSONArray("pics").getString(2);
+//                pic3 = pic3.substring(8, pic3.length() - 2);
+//                ArrayList<String> picIds = new ArrayList<>();
+//                picIds.add(pic1);
+//                picIds.add(pic2);
+//                picIds.add(pic3);
+                AppController.getInstance().clearBitmapCache();
+                for(String url : picsArray){
+                    Log.d(TAG, "buildFeedFromJson: url: " + url);
                     loadBitmapFromUrl(url);
                 }
 
@@ -65,7 +73,7 @@ public class ServerConnection {
     }
 
     public static void loadBitmapFromUrl(String url){
-        ImageRequest request = new ImageRequest(url,
+        ImageRequest request = new ImageRequest(kaffeedurl + "uploads/" + url,
                 new Response.Listener<Bitmap>() {
                     @Override
                     public void onResponse(Bitmap bitmap) {
@@ -75,7 +83,6 @@ public class ServerConnection {
                 new Response.ErrorListener() {
                     public void onErrorResponse(VolleyError error) {
                         Log.d(TAG, "onErrorResponse: " + error);
-                        //mImageView.setImageResource(R.drawable.image_load_error);
                     }
                 });
 // Access the RequestQueue through your singleton class.
@@ -90,7 +97,7 @@ public class ServerConnection {
 
         String tag_json_array = "json_array_req";
 
-        String url = koffeedurl + "/" + id;
+        String url = kaffeedurl + "api/feeds/" + id;
         JsonArrayRequest req = new JsonArrayRequest(url,
                 new Response.Listener<JSONArray>() {
                     @Override
@@ -105,6 +112,7 @@ public class ServerConnection {
             }
         });
 
+        Log.d(TAG, "makeArrayRequest: " + AppController.getInstance().getTest());
         AppController.getInstance().addToRequestQueue(req, tag_json_array);
     }
 
@@ -153,7 +161,7 @@ public class ServerConnection {
 
         String tag_json_array = "json_array_req";
 
-        JsonArrayRequest req = new JsonArrayRequest(koffeedurl,
+        JsonArrayRequest req = new JsonArrayRequest(kaffeedurl,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
